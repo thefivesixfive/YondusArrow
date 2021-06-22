@@ -24,14 +24,13 @@ namespace YondusArrowMod.Minions
             item.value = 500000;
             item.rare = 1;
             item.defense = 0;
-            item.damage = 999999999;
             item.buffType = ModContent.BuffType<YondusBlessing>();
         }
         // When item is equiped add buff
         public override void UpdateEquip(Player player) {
             // i have no idea what im doing help me
+            Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, ModContent.ProjectileType<YondusArrow>(), 1000000000, 0f, player.whoAmI, 0f, 0f);
             player.AddBuff(item.buffType, 2);
-            Projectile.NewProjectile(player.position.X + (float)(player.width / 2), player.position.Y + (float)(player.height / 2), 0f, 0f, ModContent.ProjectileType<YondusArrow>(), 0, 0f, player.whoAmI, 0f, 0f);
         }
     }
     // Buff
