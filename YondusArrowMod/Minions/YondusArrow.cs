@@ -40,8 +40,8 @@ namespace YondusArrowMod.Minions
         {
             DisplayName.SetDefault("Yondu's Blessing");
             Description.SetDefault("Whistle to control the arrow");
-            Main.buffNoSave[Type] = false;
-            Main.buffNoTimeDisplay[Type] = false;
+            Main.buffNoSave[Type] = true;
+            Main.buffNoTimeDisplay[Type] = true;
         }
         // update
         public override void Update(Player player, ref int buffIndex)
@@ -49,7 +49,7 @@ namespace YondusArrowMod.Minions
             // i have no idea what this does
             if (player.ownedProjectileCounts[ModContent.ProjectileType<YondusArrow>()] > 0)
             {
-                player.buffTime[buffIndex] = 18000;
+                player.buffTime[buffIndex] = 60;
                 
             }
             // i have no idea what this does either
@@ -105,15 +105,15 @@ namespace YondusArrowMod.Minions
             {
                 player.ClearBuff(ModContent.BuffType<YondusBlessing>());
             }
-            if (player.HasBuff(ModContent.BuffType<YondusBlessing>()))
+            if (!player.HasBuff(ModContent.BuffType<YondusBlessing>()))
             {
-                projectile.timeLeft = 2;
+                projectile.Kill();
             }
 
             // idle behavior
             Vector2 idlePosition = player.Center;
-            idlePosition.Y -= 8f;
-            idlePosition.X -= 8f;
+            idlePosition.Y -= 16f;
+            idlePosition.X -= 16f;
             Vector2 vectorToIdlePosition = idlePosition - projectile.Center;
             float distanceToIdlePosition = vectorToIdlePosition.Length();
 
@@ -174,7 +174,7 @@ namespace YondusArrowMod.Minions
                 {
                     projectile.velocity = new Vector2(0f,0f);
                     projectile.position = idlePosition;
-                    projectile.rotation = 180f;
+                    projectile.rotation = (float)Math.PI;
 
                 }
             }
