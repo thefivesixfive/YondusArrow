@@ -22,7 +22,7 @@ namespace YondusArrowMod.Minions
             item.height = 22;
             item.maxStack = 1;
             item.value = 500000;
-            item.rare = 1;
+            item.rare = -12;
             item.defense = 0;
             item.buffType = ModContent.BuffType<YondusBlessing>();
         }
@@ -49,7 +49,7 @@ namespace YondusArrowMod.Minions
             // i have no idea what this does
             if (player.ownedProjectileCounts[ModContent.ProjectileType<YondusArrow>()] > 0)
             {
-                player.buffTime[buffIndex] = 60;
+                player.buffTime[buffIndex] = 1;
                 
             }
             // i have no idea what this does either
@@ -101,7 +101,7 @@ namespace YondusArrowMod.Minions
             Player player = Main.player[projectile.owner];
 
             // active checking region
-            if (player.dead || !player.active)
+            if (player.dead || !player.active || player.armor[0].type != ModContent.ItemType<YondusFin>())
             {
                 player.ClearBuff(ModContent.BuffType<YondusBlessing>());
             }
@@ -144,8 +144,8 @@ namespace YondusArrowMod.Minions
             projectile.friendly = foundTarget;
 
             // move
-            float speed = 30f;
-            float inertia = 10f;
+            float speed = 75f;
+            float inertia = 25f;
 
             if (foundTarget)
             {
@@ -155,10 +155,19 @@ namespace YondusArrowMod.Minions
                     direction.Normalize();
                     direction *= speed;
                     projectile.velocity = (projectile.velocity * (inertia-1) + direction) / inertia;
-                    projectile.rotation = (float)(Math.Atan2(direction.Y, direction.X) / (Math.PI * 2));
+                    projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X);
+                    // check rotation direction
+                    if (direction.X > projectile.rotation) // rotate right
+                    {
+                        projectile.rotation -= (float)(Math.PI / 2);
+                    }
+                    else
+                    {
+                        projectile.rotation += (float)(Math.PI / 2);
+                    }
                 }
             }
-            else 
+            else
             {
                 // if far from player
                 if (distanceToIdlePosition > 64f)
@@ -166,8 +175,16 @@ namespace YondusArrowMod.Minions
                     vectorToIdlePosition.Normalize();
 					vectorToIdlePosition *= speed;
 					projectile.velocity = (projectile.velocity * (inertia - 1) + vectorToIdlePosition) / inertia;
-                    // animation
-                    projectile.rotation = (float)(Math.Atan2(vectorToIdlePosition.Y, vectorToIdlePosition.X) / (Math.PI * 2));
+                    projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X);
+                    // check rotation direction
+                    if (vectorToIdlePosition.X > projectile.rotation) // rotate right
+                    {
+                        projectile.rotation += (float)(Math.PI / 2);
+                    }
+                    else
+                    {
+                        projectile.rotation -= (float)(Math.PI / 2);
+                    }
                 }
                 // otherwise
                 else
@@ -175,7 +192,6 @@ namespace YondusArrowMod.Minions
                     projectile.velocity = new Vector2(0f,0f);
                     projectile.position = idlePosition;
                     projectile.rotation = (float)Math.PI;
-
                 }
             }
         }
